@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Перетаскиваемое окно</title>
+  <style>
+    #mydiv {
+      position: absolute;
+      z-index: 9;
+      background-color: #f1f1f1;
+      border: 1px solid #d3d3d3;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    #mydivheader {
+      padding: 10px;
+      cursor: move;
+      background-color: #2196F3;
+      color: #fff;
+      font-weight: bold;
+      user-select: none; /* запрет выделения текста при перетаскивании */
+    }
+
+    #mydivcontent {
+      padding: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="mydiv">
+    <div id="mydivheader">Перетащи меня</div>
+    <div id="mydivcontent">
+      <p>Это простое перетаскиваемое окно.</p>
+    </div>
+  </div>
+
+  <script>
+    // Сделать элемент с id="mydiv" перетаскиваемым по элементу с id="mydivheader"
+    dragElement(document.getElementById("mydiv"));
+
+    function dragElement(elmnt) {
+      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      var header = document.getElementById(elmnt.id + "header");
+      if (header) {
+        // если есть заголовок, то перетаскивать только за него
+        header.onmousedown = dragMouseDown;
+      } else {
+        // иначе перетаскивать весь элемент
+        elmnt.onmousedown = dragMouseDown;
+      }
+
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // получить начальные координаты курсора мыши
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // при движении мыши вызывается функция перемещения
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // вычислить смещение курсора
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // задать новые координаты окна
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        // прекратить перетаскивание
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+  </script>
+
+
+
+
+<style>
+  .compact {
+    width: 300px;
+    height: 70px;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+  }
+  
+  .tiny {
+    width: 150px;
+    height: 40px;
+    font-size: 12px;
+  }
+</style>
+
+
+<!-- Способ 1: rows/cols -->
+<textarea rows="2" cols="20" placeholder="Маленькое поле"></textarea>
+<br><br>
+
+<!-- Способ 2: CSS стили -->
+<textarea class="compact" placeholder="Компактное поле"></textarea>
+<br><br>
+
+<!-- Способ 3: Совсем маленькое -->
+<textarea class="tiny" placeholder="Мини поле"></textarea>
+
+</body>
+</html>
